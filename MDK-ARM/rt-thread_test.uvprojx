@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G071xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;    ../Drivers/STM32G0xx_HAL_Driver/Inc;    ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;    ../Drivers/CMSIS/Device/ST/STM32G0xx/Include;    ../Drivers/CMSIS/Include;    ../Middlewares/Third_Party/RealThread_RTOS_RT-Thread/include/; ../Middlewares/Third_Party/RealThread_RTOS_RT-Thread/components/finsh/</IncludePath>
+              <IncludePath>../Inc;     ../Drivers/STM32G0xx_HAL_Driver/Inc;     ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;     ../Drivers/CMSIS/Device/ST/STM32G0xx/Include;     ../Drivers/CMSIS/Include;     ../Middlewares/Third_Party/RealThread_RTOS_RT-Thread/include/;  ../Middlewares/Third_Party/RealThread_RTOS_RT-Thread/components/finsh/</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -416,6 +416,16 @@
               <FileName>stm32g0xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_hal_uart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32g0xx_hal_rcc.c</FileName>
@@ -498,6 +508,9 @@
               <FilePath>../Src/system_stm32g0xx.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>::CMSIS</GroupName>
         </Group>
         <Group>
           <GroupName>Middlewares/RT-Thread/RTOS/shell</GroupName>
@@ -593,9 +606,6 @@
               <FilePath>../Middlewares/Third_Party/RealThread_RTOS_RT-Thread/libcpu/arm/cortex-m0/cpuport.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
     </Target>

@@ -19,6 +19,10 @@
     ],
     "files.associations": {
         "main.h": "c",
-        "rtthread.h": "c"
+        "rtthread.h": "c",
+        "stm32g0xx_hal.h": "c",
+        "stm32g0xx_hal_conf.h": "c",
+        "stm32g0xx_hal_uart.h": "c",
+        "usart.h": "c"
     }
 }
