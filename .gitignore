@@ -34,3 +34,6 @@ ncscope.*
 #ctag files
 tags
 
+*.htm
+*.crf
+*.lnp
