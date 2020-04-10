@@ -27,6 +27,7 @@
         "config.h": "c",
         "stdio.h": "c",
         "math.h": "c",
-        "gpio.h": "c"
+        "gpio.h": "c",
+        "task.h": "c"
     }
 }

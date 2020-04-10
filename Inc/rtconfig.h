@@ -27,7 +27,7 @@
 
 // <o>the max length of object name<2-16>
 //  <i>Default: 8
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 16
 
 // <c1>Using RT-Thread components initialization
 //  <i>Using RT-Thread components initialization
@@ -163,7 +163,7 @@
 // <o>the stack of finsh thread <1-4096>
 //  <i>the stack of finsh thread
 //  <i>Default: 512  (512Byte)
-#define FINSH_THREAD_STACK_SIZE     512
+#define FINSH_THREAD_STACK_SIZE     1024
 
 // <o>the history lines of finsh thread <1-32>
 //  <i>the history lines of finsh thread

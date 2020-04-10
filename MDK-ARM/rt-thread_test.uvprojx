@@ -407,6 +407,11 @@
               <FileType>1</FileType>
               <FilePath>../Src/stm32g0xx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\task.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

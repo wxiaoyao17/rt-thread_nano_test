@@ -24,14 +24,15 @@ typedef enum{FALSE = 0, TRUE = !FALSE}BOOL;
 #endif
 
 //RTOS相关头文件包含
-#include <rthw.h>
-#include <rtthread.h>
-#include "stm32g0xx_hal.h"
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <rthw.h>
+#include <rtthread.h>
+#include "stm32g0xx_hal.h"
 
 #include "gpio.h"
 #include "uart.h"
+#include "task.h"
 
 #endif // !__CONFIG_H__

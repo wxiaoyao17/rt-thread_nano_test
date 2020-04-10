@@ -23,8 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <rtthread.h>
-
+#include "config.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,11 +66,7 @@
   */
 int main(void)
 {
-  while(1)
-  {
-    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-    rt_thread_mdelay(500);
-  }
+  return 0;
 }
 
 #if 0
