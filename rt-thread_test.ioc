@@ -34,6 +34,7 @@ NVIC.NonMaskableInt_IRQn=true\:0\:0\:false\:false\:true\:false\:false
 NVIC.PendSV_IRQn=true\:0\:0\:false\:false\:false\:false\:false
 NVIC.SVC_IRQn=true\:0\:0\:false\:false\:true\:false\:false
 NVIC.SysTick_IRQn=true\:0\:0\:false\:false\:false\:false\:false
+NVIC.USART3_4_LPUART1_IRQn=true\:0\:0\:false\:false\:true\:true\:true
 PA13.Mode=Serial_Wire
 PA13.Signal=SYS_SWDIO
 PA14-BOOT0.Mode=Serial_Wire
