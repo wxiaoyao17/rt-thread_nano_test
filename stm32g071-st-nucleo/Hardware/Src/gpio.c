@@ -6,7 +6,7 @@
   * @param None
   * @retval None
   */
-void MX_GPIO_Init(void)
+int MX_GPIO_Init(void)
 {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
 
@@ -23,6 +23,7 @@ void MX_GPIO_Init(void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+    return 0;
 }
 
 INIT_BOARD_EXPORT(MX_GPIO_Init);

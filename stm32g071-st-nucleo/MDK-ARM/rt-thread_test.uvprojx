@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G071xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;../Middlewares/Third_Party/RealThread_RTOS_RT-Thread/include/;../Middlewares/Third_Party/RealThread_RTOS_RT-Thread/components/finsh/;..\Harware\Inc</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;../Middlewares/Third_Party/RealThread_RTOS_RT-Thread/include/;../Middlewares/Third_Party/RealThread_RTOS_RT-Thread/components/finsh/;..\Hardware\Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -615,12 +615,12 @@
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Harware\Src\gpio.c</FilePath>
+              <FilePath>..\Hardware\Src\gpio.c</FilePath>
             </File>
             <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Harware\Src\uart.c</FilePath>
+              <FilePath>..\Hardware\Src\uart.c</FilePath>
             </File>
           </Files>
         </Group>
