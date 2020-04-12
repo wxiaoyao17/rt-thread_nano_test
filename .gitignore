@@ -1,39 +1,68 @@
-*.pyc
-*.map
-*.dblite
-*.elf
-*.bin
-*.hex
-*.axf
-*.exe
-*.pdb
-*.idb
-*.ilk
-*.old
-build
-Debug
-documentation/html
-*~
+# Prerequisites
+*.d
+
+# Object files
 *.o
+*.ko
 *.obj
-*.bak
-*.dep
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
 *.lib
 *.a
-*.i
-*.d
-tools/kconfig-frontends/kconfig-mconf
-packages
-cconfig.h
-GPUCache
+*.la
+*.lo
 
-#cscope files
-cscope.*
-ncscope.*
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
 
-#ctag files
-tags
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
 
-*.htm
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+# My Configuration
+/.vscode/ipch
+
+*.lst
 *.crf
+*.bak
+*.i
+*.htm
 *.lnp
+*.pyc
+*.dblite
+*.bin
+*.axf
+*.old
+*.dep
