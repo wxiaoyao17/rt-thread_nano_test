@@ -58,6 +58,7 @@ dkms.conf
 *.crf
 *.bak
 *.i
+*.__i
 *.htm
 *.lnp
 *.pyc

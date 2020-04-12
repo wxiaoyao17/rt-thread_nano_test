@@ -28,6 +28,9 @@
         "stdio.h": "c",
         "math.h": "c",
         "gpio.h": "c",
-        "task.h": "c"
+        "task.h": "c",
+        "iwdg.h": "c",
+        "key.h": "c",
+        "led.h": "c"
     }
 }

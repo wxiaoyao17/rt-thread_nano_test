@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>
+#include "config.h"
 
 #define _SCB_BASE       (0xE000E010UL)
 #define _SYSTICK_CTRL   (*(rt_uint32_t *)(_SCB_BASE + 0x0))
@@ -68,6 +69,13 @@ void rt_hw_board_init()
     
     /* System Tick Configuration */
     _SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+
+    // HAL_Init();                     // 初始化HAL库
+    // Stm32_Clock_Init(336, 8, 2, 7); // 设置时钟,168Mhz
+    // delay_init(168);                // 初始化延时函数
+    uart_init(115200);              // 初始化USART
+    LED_Init();                     // 初始化LED
+    KEY_Init();                     // 初始化按键
 
     /* Call components board initial (use INIT_BOARD_EXPORT()) */
 #ifdef RT_USING_COMPONENTS_INIT

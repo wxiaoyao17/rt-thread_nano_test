@@ -4,7 +4,7 @@
 #define __RTTHREAD_CFG_H__
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
-#include "RTE_Components.h"
+// #include "RTE_Components.h"
 
 #if defined(RTE_USING_FINSH)
 #define RT_USING_FINSH
