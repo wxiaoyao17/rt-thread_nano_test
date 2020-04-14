@@ -66,6 +66,8 @@
   */
 int main(void)
 {
+  task_feeddog();
+
   return 0;
 }
 

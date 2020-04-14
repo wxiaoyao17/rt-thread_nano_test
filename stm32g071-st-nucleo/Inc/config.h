@@ -31,8 +31,9 @@ typedef enum{FALSE = 0, TRUE = !FALSE}BOOL;
 #include <rtthread.h>
 #include "stm32g0xx_hal.h"
 
+#include "task.h"
 #include "gpio.h"
 #include "uart.h"
-#include "task.h"
+#include "iwdg.h"
 
 #endif // !__CONFIG_H__
