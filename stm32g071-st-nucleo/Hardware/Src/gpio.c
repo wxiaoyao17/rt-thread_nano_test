@@ -27,3 +27,15 @@ int MX_GPIO_Init(void)
 }
 
 INIT_BOARD_EXPORT(MX_GPIO_Init);
+
+void LED_Blink(void)
+{
+    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+    rt_thread_mdelay(200);
+    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+    rt_thread_mdelay(200);
+    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+    rt_thread_mdelay(200);
+    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+    rt_thread_mdelay(200);
+}

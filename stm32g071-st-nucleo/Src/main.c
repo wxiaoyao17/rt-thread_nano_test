@@ -66,8 +66,14 @@
   */
 int main(void)
 {
-  task_feeddog();
-
+  // task_feed_dog();
+  task_uart1_recv();
+  
+  while(1)
+  {
+    rt_thread_mdelay(1000);
+  }
+  
   return 0;
 }
 
