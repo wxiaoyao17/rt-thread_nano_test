@@ -81,7 +81,7 @@ static void thread_uart1_recv_entry(void *parameter)
         {
             rt_kprintf("uart1 recv data:%s\n", g_USART1_RxBuf);
 
-            if(strstr((char*)g_USART1_RxBuf, "led_blink") != NULL)
+            if (strstr((char*)g_USART1_RxBuf, "led_blink") != NULL)
             {
                 LED_Blink();
             }
