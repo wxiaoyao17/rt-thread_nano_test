@@ -44,7 +44,7 @@
 // UART_HandleTypeDef hlpuart1;
 
 /* USER CODE BEGIN PV */
-
+// uint8_t recvByte;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -57,7 +57,9 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+extern uint8 g_USART1_RxBuf[]; // 串口接收缓冲区
+extern uint16 g_USART1_RecPos;               // 存放当前串口接收数据存放的位置
+extern uint8_t usart1_recv_flag;
 /* USER CODE END 0 */
 
 /**
@@ -66,15 +68,29 @@
   */
 int main(void)
 {
-  // task_feed_dog();
-  task_uart1_recv();
-  
-  while(1)
-  {
-    rt_thread_mdelay(1000);
-  }
-  
-  return 0;
+    uint8_t txbuf[100];
+
+    // task_feed_dog();
+    // task_uart1_recv();
+
+    memcpy(txbuf, "this is an uart recv test\n", 100);
+    HAL_UART_Transmit(&huart1, txbuf, strlen((char *)txbuf), 1000);
+
+    // HAL_UART_Receive_IT(&huart1, &recvByte, 1);
+    // usart1_recv_flag = 0;
+    while (1)
+    {
+      if (usart1_recv_flag && g_USART1_RecPos)
+      {
+        rt_kprintf("recv data: %s\n", g_USART1_RxBuf);
+        memset(g_USART1_RxBuf, 0, g_USART1_RecPos);
+        g_USART1_RecPos = 0;
+        usart1_recv_flag = 0;
+      }
+      rt_thread_mdelay(10);
+    }
+
+    return 0;
 }
 
 #if 0
@@ -93,10 +109,11 @@ void SystemClock_Config(void)
   HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;
@@ -122,7 +139,10 @@ void SystemClock_Config(void)
   }
   /** Initializes the peripherals clocks 
   */
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_LPUART1;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_USART2
+                              |RCC_PERIPHCLK_LPUART1;
+  PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
+  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
   PeriphClkInit.Lpuart1ClockSelection = RCC_LPUART1CLKSOURCE_PCLK1;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {

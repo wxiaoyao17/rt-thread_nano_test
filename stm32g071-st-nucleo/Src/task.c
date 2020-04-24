@@ -97,7 +97,7 @@ void task_uart1_recv(void)
 
     if (uart1_recv_sem != RT_NULL)
     {
-        rt_kprintf("信号量 uart1_recv_sem 创建成功.\n");
+        rt_kprintf("Semphore uart1_recv_sem created.\n");
     }
 
     tid_uart1_recv = rt_thread_create("thread_uart1_recv",

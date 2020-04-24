@@ -1,14 +1,15 @@
 #include "config.h"
 #include "uart.h"
 
-static UART_HandleTypeDef huart2;
-static UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart1;
 
 rt_sem_t uart1_recv_sem;
 
 uint8 g_USART1_RxBuf[USART1_RX_BUF_SIZE]; // 串口接收缓冲区
 uint16 g_USART1_RecPos = 0;               // 存放当前串口接收数据存放的位置
-
+uint8_t usart1_recv_flag = 0;
+uint8_t recvByte = 0;
 /**
   * @brief USART2 Initialization Function
   * @param None
@@ -122,7 +123,7 @@ int MX_USART1_UART_Init(void)
 {
 
     /* USER CODE BEGIN USART1_Init 0 */
-
+    uint8_t recvByte = 0;
     /* USER CODE END USART1_Init 0 */
 
     /* USER CODE BEGIN USART1_Init 1 */
@@ -156,45 +157,90 @@ int MX_USART1_UART_Init(void)
         while(1);
     }
     /* USER CODE BEGIN USART1_Init 2 */
+    // HAL_UART_Receive_IT(&huart1, (uint8_t *)g_USART1_RxBuf, USART1_RX_BUF_SIZE);
+    HAL_UART_Receive_IT(&huart1, &recvByte, 1);
+
     return 0;
     /* USER CODE END USART1_Init 2 */
 }
 
 INIT_BOARD_EXPORT(MX_USART1_UART_Init);
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART1)
+    {
+        if (HAL_UART_Receive_IT(&huart1, &recvByte, 1) == HAL_OK)
+        {
+            g_USART1_RxBuf[g_USART1_RecPos++] = recvByte;
+        }
+        // HAL_UART_Receive_IT(&huart1, g_USART1_RxBuf, 1);
+        // HAL_UART_Transmit(&huart1, g_USART1_RxBuf, 1, 100);
+    }
+}
+
+// static uint8_t recvByte = 0xFF;
+// static uint8_t ret = 0xFF;
 /**
   * @brief This function handles USART1 global interrupt / USART1 wake-up interrupt through EXTI line 25.
   */
 void USART1_IRQHandler(void)
 {
     /* USER CODE BEGIN USART1_IRQn 0 */
-    uint8_t recvByte;
-    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_RXNE)) // 接收中断
-    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET) // 接收中断
-    {
-        if (HAL_UART_Receive(&huart1, &recvByte, 1, 10) == HAL_OK)
-        {
-            g_USART1_RxBuf[g_USART1_RecPos++] = recvByte;
-        }
-        __HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_RXNE);
-    }
-    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_ORE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_FLAG_ORE)) // 接收中断
-    {
-        // __HAL_UART_CLEAR_OREFLAG(&huart1);
-        __HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_ORE);
-    }
-    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_FLAG_IDLE)) // 接收中断
-    {
-        g_USART1_RxBuf[g_USART1_RecPos++] = '\0';
-        rt_sem_release(uart1_recv_sem);
+    // uint8_t recvByte;
 
-        // __HAL_UART_CLEAR_IDLEFLAG(&huart1);
-        __HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_IDLE);
+    rt_enter_critical();
+    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET)
+    {
+        // HAL_UART_RxCpltCallback(&huart1);
     }
+    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) != RESET)
+    {
+        __HAL_UART_CLEAR_IDLEFLAG(&huart1);
+        g_USART1_RxBuf[g_USART1_RecPos] = '\0';
+        usart1_recv_flag = 1;
+        // usart1_recv_pos = 0;
+        // memset(usart1_recv_buf, 0, usart1_recv_pos);
+    }
+
+    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_RXNE)) // 接收中断
+    // // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET) // 接收中断
+    // {
+    //     // if (HAL_UART_Receive(&huart1, &recvByte, 1, 1000) == HAL_OK)
+    //     // {
+    //     //     g_USART1_RxBuf[g_USART1_RecPos++] = recvByte;
+    //     // }
+    //     // __HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_RXNE);
+    //     // ret = HAL_UART_Receive(&huart1, &recvByte, 1, 1000);
+    //     ret = HAL_UART_Receive_IT(&huart1, &recvByte, 1);
+    //     if (ret == HAL_OK)
+    //     {
+    //         recvByte += 1;
+    //     }
+    //     else
+    //     {
+    //         recvByte -= 1;
+    //     }
+    // }
+    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_ORE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_FLAG_ORE)) // 接收中断
+    // {
+    //     // __HAL_UART_CLEAR_OREFLAG(&huart1);
+    //     __HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_ORE);
+    // }
+    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_FLAG_IDLE)) // 接收中断
+    // {
+    //     g_USART1_RxBuf[g_USART1_RecPos++] = '\0';
+    //     rt_sem_release(uart1_recv_sem);
+
+    //     // __HAL_UART_CLEAR_IDLEFLAG(&huart1);
+    //     __HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_IDLE);
+    // }
 
     /* USER CODE END USART1_IRQn 0 */
     HAL_UART_IRQHandler(&huart1);
     /* USER CODE BEGIN USART1_IRQn 1 */
-    __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
+    // __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
+
+    rt_exit_critical();
     /* USER CODE END USART1_IRQn 1 */
 }
