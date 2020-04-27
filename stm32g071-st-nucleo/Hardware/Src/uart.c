@@ -123,7 +123,7 @@ int MX_USART1_UART_Init(void)
 {
 
     /* USER CODE BEGIN USART1_Init 0 */
-    uint8_t recvByte = 0;
+
     /* USER CODE END USART1_Init 0 */
 
     /* USER CODE BEGIN USART1_Init 1 */
@@ -168,6 +168,8 @@ INIT_BOARD_EXPORT(MX_USART1_UART_Init);
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
+    // uint8_t recvByte = 0;
+
     if (huart->Instance == USART1)
     {
         if (HAL_UART_Receive_IT(&huart1, &recvByte, 1) == HAL_OK)
