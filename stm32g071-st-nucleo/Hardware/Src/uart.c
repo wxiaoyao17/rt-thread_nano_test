@@ -157,8 +157,8 @@ int MX_USART1_UART_Init(void)
         while(1);
     }
     /* USER CODE BEGIN USART1_Init 2 */
-    // HAL_UART_Receive_IT(&huart1, (uint8_t *)g_USART1_RxBuf, USART1_RX_BUF_SIZE);
-    HAL_UART_Receive_IT(&huart1, &recvByte, 1);
+    HAL_UART_Receive_IT(&huart1, (uint8_t *)g_USART1_RxBuf, USART1_RX_BUF_SIZE);
+    // HAL_UART_Receive_IT(&huart1, &recvByte, 1);
 
     return 0;
     /* USER CODE END USART1_Init 2 */
@@ -166,20 +166,62 @@ int MX_USART1_UART_Init(void)
 
 INIT_BOARD_EXPORT(MX_USART1_UART_Init);
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+/**
+   * @brief Read one byte Data from Uart DR REG.
+   * @param UART_HandleTypeDef: pointer to the uart handle
+   * @retval data
+   */
+static uint16_t USART_ReceiveData(UART_HandleTypeDef *huart)
 {
-    // uint8_t recvByte = 0;
+    uint16_t tmp;
+    uint16_t uhMask;
+    uint16_t uhdata;
 
-    if (huart->Instance == USART1)
+    /* Computation of UART mask to apply to RDR register */
+    UART_MASK_COMPUTATION(huart);
+    uhMask = huart->Mask;
+    uhdata = (uint16_t)READ_REG(huart->Instance->RDR);
+    if ((huart->Init.WordLength == UART_WORDLENGTH_9B) && (huart->Init.Parity == UART_PARITY_NONE))
     {
-        if (HAL_UART_Receive_IT(&huart1, &recvByte, 1) == HAL_OK)
-        {
-            g_USART1_RxBuf[g_USART1_RecPos++] = recvByte;
-        }
-        // HAL_UART_Receive_IT(&huart1, g_USART1_RxBuf, 1);
-        // HAL_UART_Transmit(&huart1, g_USART1_RxBuf, 1, 100);
+        tmp = (uint16_t)(uhdata & uhMask);
+    }
+    else
+    {
+        tmp = (uint8_t)(uhdata & (uint8_t)uhMask);
+    }
+    return tmp;
+}
+
+void USART1_IRQHandler_Callback(UART_HandleTypeDef *huart)
+{
+    uint32_t isrflags = READ_REG(huart->Instance->ISR);
+
+    if ((isrflags & UART_FLAG_RXNE) != RESET)
+    {
+        recvByte = USART_ReceiveData(huart);
+        g_USART1_RxBuf[g_USART1_RecPos++] = recvByte;
+    }
+    if ((isrflags & UART_FLAG_IDLE) != RESET)
+    {
+        g_USART1_RxBuf[g_USART1_RecPos] = '\0';
+        // usart1_recv_flag = 1;
+        rt_sem_release(uart1_recv_sem);
+        __HAL_UART_CLEAR_IDLEFLAG(huart);
     }
 }
+
+// void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+// {
+//     if (huart->Instance == USART1)
+//     {
+//         if (HAL_UART_Receive_IT(&huart1, &recvByte, 1) == HAL_OK)
+//         {
+//             g_USART1_RxBuf[g_USART1_RecPos++] = recvByte;
+//         }
+//         // HAL_UART_Receive_IT(&huart1, g_USART1_RxBuf, 1);
+//         // HAL_UART_Transmit(&huart1, g_USART1_RxBuf, 1, 100);
+//     }
+// }
 
 /**
   * @brief This function handles USART1 global interrupt / USART1 wake-up interrupt through EXTI line 25.
@@ -187,37 +229,40 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 void USART1_IRQHandler(void)
 {
     /* USER CODE BEGIN USART1_IRQn 0 */
-    rt_enter_critical();
+    USART1_IRQHandler_Callback(&huart1);
+
+    // rt_enter_critical();
 
     // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_RXNE)) // 接收中断
     // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET)
     // {
     //     // if (HAL_UART_Receive(&huart1, &recvByte, 1, 1000) == HAL_OK)
-    //     if (HAL_UART_Receive_IT(&huart1, &recvByte, 1) == HAL_OK)
-    //     {
-    //         g_USART1_RxBuf[g_USART1_RecPos++] = recvByte;
-    //     }
+    //     // if (HAL_UART_Receive_IT(&huart1, &recvByte, 1) == HAL_OK)
+    //     // {
+    //     //     g_USART1_RxBuf[g_USART1_RecPos++] = recvByte;
+    //     // }
+    //     // HAL_UART_RxCpltCallback(&huart1);
     //     // __HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_RXNE);
     // }
-    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_ORE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_FLAG_ORE)) // 接收中断
-    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_ORE) != RESET)
-    {
-        __HAL_UART_CLEAR_OREFLAG(&huart1);
-    }
-    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_FLAG_IDLE)) // 接收中断
-    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) != RESET)
-    {
-        g_USART1_RxBuf[g_USART1_RecPos] = '\0';
-        // usart1_recv_flag = 1;
-        rt_sem_release(uart1_recv_sem);
-        __HAL_UART_CLEAR_IDLEFLAG(&huart1);
-    }
+    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_ORE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_ORE)) // 接收中断
+    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_ORE) != RESET)
+    // {
+    //     __HAL_UART_CLEAR_OREFLAG(&huart1);
+    // }
+    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_IDLE)) // 接收中断
+    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) != RESET)
+    // {
+    //     g_USART1_RxBuf[g_USART1_RecPos] = '\0';
+    //     // usart1_recv_flag = 1;
+    //     rt_sem_release(uart1_recv_sem);
+    //     __HAL_UART_CLEAR_IDLEFLAG(&huart1);
+    // }
 
     /* USER CODE END USART1_IRQn 0 */
-    HAL_UART_IRQHandler(&huart1);
+    // HAL_UART_IRQHandler(&huart1);
     /* USER CODE BEGIN USART1_IRQn 1 */
     // __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
 
-    rt_exit_critical();
+    // rt_exit_critical();
     /* USER CODE END USART1_IRQn 1 */
 }
