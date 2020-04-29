@@ -80,10 +80,10 @@ static void thread_uart1_recv_entry(void *parameter)
 
     while (1)
     {
-#if 1 // 信号量方式
+#if 0 // 信号量方式
         ret = rt_sem_take(uart1_recv_sem, RT_WAITING_FOREVER);
 #else // 信息队列方式
-        ret = rt_mq_recv(uart1_recv_mq, g_USART1_RxBuf, USART1_RX_BUF_SIZE, RT_WAITING_FOREVER);
+        ret = rt_mq_recv(uart1_recv_mq, g_USART1_RxBuf, sizeof(g_USART1_RxBuf), RT_WAITING_FOREVER);
 #endif
         if (RT_EOK == ret)
         {
@@ -100,7 +100,7 @@ static void thread_uart1_recv_entry(void *parameter)
 
 void task_uart1_recv(void)
 {
-#if 1 // 信号量方式
+#if 0 // 信号量方式
     uart1_recv_sem = rt_sem_create("uart1_recv_sem", 0, RT_IPC_FLAG_FIFO);
     if (uart1_recv_sem != RT_NULL)
     {

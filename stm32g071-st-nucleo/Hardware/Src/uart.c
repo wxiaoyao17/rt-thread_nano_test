@@ -169,70 +169,6 @@ int MX_USART1_UART_Init(void)
 
 INIT_BOARD_EXPORT(MX_USART1_UART_Init);
 
-#if 0
-/**
-   * @brief Read one byte Data from Uart DR REG.
-   * @param UART_HandleTypeDef: pointer to the uart handle
-   * @retval data
-   */
-static uint16_t USART_ReceiveData(UART_HandleTypeDef *huart)
-{
-    uint16_t tmp;
-    uint16_t uhMask;
-    uint16_t uhdata;
-
-    /* Computation of UART mask to apply to RDR register */
-    UART_MASK_COMPUTATION(huart);
-    uhMask = huart->Mask;
-    uhdata = (uint16_t)READ_REG(huart->Instance->RDR);
-    if ((huart->Init.WordLength == UART_WORDLENGTH_9B) && (huart->Init.Parity == UART_PARITY_NONE))
-    {
-        tmp = (uint16_t)(uhdata & uhMask);
-    }
-    else
-    {
-        tmp = (uint8_t)(uhdata & (uint8_t)uhMask);
-    }
-    return tmp;
-}
-
-void USART1_IRQHandler_Callback(UART_HandleTypeDef *huart)
-{
-    uint8_t recvByte = 0;
-    uint32_t isrflags = READ_REG(huart->Instance->ISR);
-
-    if ((isrflags & UART_FLAG_RXNE) != RESET)
-    {
-        recvByte = USART_ReceiveData(huart);
-        g_USART1_RxBuf[g_USART1_RecPos++] = recvByte;
-    }
-    if ((isrflags & UART_FLAG_IDLE) != RESET)
-    {
-        g_USART1_RxBuf[g_USART1_RecPos] = '\0';
-
-#if 0 // 信号量方式
-        rt_sem_release(uart1_recv_sem);
-#else // 信息队列方式
-        rt_mq_send(uart1_recv_mq, g_USART1_RxBuf, sizeof(g_USART1_RxBuf));
-#endif
-
-        __HAL_UART_CLEAR_IDLEFLAG(huart);
-    }
-}
-#endif
-
-// void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-// {
-//     if (huart->Instance == USART1)
-//     {
-//         if (HAL_UART_Receive(&huart1, &recvByte, 1, 10) == HAL_OK)
-//         // if (HAL_UART_Receive_IT(&huart1, &recvByte, 1) == HAL_OK)
-//         {
-//             g_USART1_RxBuf[g_USART1_RecPos++] = recvByte;
-//         }
-//     }
-// }
-
 /**
   * @brief This function handles USART1 global interrupt / USART1 wake-up interrupt through EXTI line 25.
   */
@@ -243,7 +179,8 @@ void USART1_IRQHandler(void)
 
     int8_t ret;
 
-    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET)
+    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET)
+    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_RXNE))
     {
         if (HAL_UART_Receive(&huart1, &recvByte, 1, 10) == HAL_OK)
         // if (HAL_UART_Receive_IT(&huart1, &recvByte, 1) == HAL_OK)
@@ -252,14 +189,19 @@ void USART1_IRQHandler(void)
         }
         // HAL_UART_RxCpltCallback(&huart1);
     }
-    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) != RESET)
+    // if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) != RESET)
+    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) && __HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_IDLE))
     {
         __HAL_UART_CLEAR_IDLEFLAG(&huart1);
         g_USART1_RxBuf[g_USART1_RecPos] = '\0';
-#if 1 // 信号量方式
-        rt_sem_release(uart1_recv_sem);
+#if 0 // 信号量方式
+        ret = rt_sem_release(uart1_recv_sem);
+        if (RT_EOK != ret)
+        {
+            rt_kprintf("semaphore send error: %d\n", ret);
+        }
 #else // 信息队列方式
-        ret = rt_mq_send(uart1_recv_mq, g_USART1_RxBuf, USART1_RX_BUF_SIZE);
+        ret = rt_mq_send(uart1_recv_mq, g_USART1_RxBuf, sizeof(g_USART1_RxBuf));
         if (RT_EOK != ret)
         {
             rt_kprintf("message send error: %d\n", ret);

@@ -1,7 +1,7 @@
 #ifndef __UART_H__
 #define __UART_H__
 
-#define USART1_RX_BUF_SIZE 256
+#define USART1_RX_BUF_SIZE 64
 
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart1;
