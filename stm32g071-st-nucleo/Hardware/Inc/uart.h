@@ -7,6 +7,7 @@ extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart1;
 
 extern rt_sem_t uart1_recv_sem;
+extern rt_mq_t uart1_recv_mq;
 
 extern uint8_t g_USART1_RxBuf[USART1_RX_BUF_SIZE]; // 串口接收缓冲区
 extern uint16_t g_USART1_RecPos;                   // 存放当前串口接收数据存放的位置

@@ -10,12 +10,16 @@
 #define THREAD_IWDG_TIMESLICE 10
 
 #define THREAD_UART1_PRIORITY 25
-#define THREAD_UART1_STACK_SIZE 512
+#define THREAD_UART1_STACK_SIZE 1024
 #define THREAD_UART1_TIMESLICE 10
 
 static rt_thread_t tid_led_blink = RT_NULL;
 static rt_thread_t tid_feed_dog = RT_NULL;
 static rt_thread_t tid_uart1_recv = RT_NULL;
+
+extern rt_sem_t uart1_recv_sem;
+extern rt_mq_t uart1_recv_mq;
+// extern uint8 g_USART1_RxBuf[];
 
 static void thread_led_blink_entry(void *parameter)
 {
@@ -76,7 +80,11 @@ static void thread_uart1_recv_entry(void *parameter)
 
     while (1)
     {
+#if 1 // 信号量方式
         ret = rt_sem_take(uart1_recv_sem, RT_WAITING_FOREVER);
+#else // 信息队列方式
+        ret = rt_mq_recv(uart1_recv_mq, g_USART1_RxBuf, USART1_RX_BUF_SIZE, RT_WAITING_FOREVER);
+#endif
         if (RT_EOK == ret)
         {
             rt_kprintf("uart1 recv data:%s\n", g_USART1_RxBuf);
@@ -86,20 +94,25 @@ static void thread_uart1_recv_entry(void *parameter)
                 LED_Blink();
             }
             memset(g_USART1_RxBuf, 0, USART1_RX_BUF_SIZE);
-            g_USART1_RecPos = 0;
         }
     }
 }
 
 void task_uart1_recv(void)
 {
+#if 1 // 信号量方式
     uart1_recv_sem = rt_sem_create("uart1_recv_sem", 0, RT_IPC_FLAG_FIFO);
-
     if (uart1_recv_sem != RT_NULL)
     {
         rt_kprintf("Semphore uart1_recv_sem created.\n");
     }
-
+#else // 信息队列方式
+    uart1_recv_mq = rt_mq_create("uart1_recv_mq", 64, 10, RT_IPC_FLAG_FIFO);
+    if (uart1_recv_mq != RT_NULL)
+    {
+        rt_kprintf("MessageQueue uart1_recv_mq created.\n");
+    }
+#endif
     tid_uart1_recv = rt_thread_create("thread_uart1_recv",
                             thread_uart1_recv_entry,
                             RT_NULL,
