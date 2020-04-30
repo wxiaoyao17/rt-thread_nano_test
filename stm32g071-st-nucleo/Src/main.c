@@ -68,25 +68,11 @@ extern uint8_t usart1_recv_flag;
   */
 int main(void)
 {
-    uint8_t txbuf[100];
-
     // task_feed_dog();
     task_uart1_recv();
 
-    memcpy(txbuf, "this is an uart recv test\n", 100);
-    HAL_UART_Transmit(&huart1, txbuf, strlen((char *)txbuf), 1000);
-
-    // HAL_UART_Receive_IT(&huart1, &recvByte, 1);
-    // usart1_recv_flag = 0;
     while (1)
     {
-      // if (usart1_recv_flag && g_USART1_RecPos)
-      // {
-      //   rt_kprintf("recv data: %s\n", g_USART1_RxBuf);
-      //   memset(g_USART1_RxBuf, 0, g_USART1_RecPos);
-      //   g_USART1_RecPos = 0;
-      //   usart1_recv_flag = 0;
-      // }
       rt_thread_mdelay(100);
     }
 
