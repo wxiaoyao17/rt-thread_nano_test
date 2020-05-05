@@ -61,10 +61,12 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
     if ((PC13_flag & 0x01) == 0x01)
     {
         HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+        task_create();
     }
     else
     {
         HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+        task_delete();
     }
 }
 

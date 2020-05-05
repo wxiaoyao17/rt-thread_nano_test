@@ -69,7 +69,7 @@ extern uint8_t usart1_recv_flag;
 int main(void)
 {
     // task_feed_dog();
-    task_uart1_recv();
+    // task_uart1_recv();
 
     while (1)
     {
