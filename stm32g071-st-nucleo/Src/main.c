@@ -24,7 +24,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "config.h"
-#include "adc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -69,24 +68,12 @@
   */
 int main(void)
 {
-    float voltage_ch8 = 0;
-    float voltage_ch9 = 0;
-
     // task_feed_dog();
     // task_uart1_recv();
 
     while (1)
     {
-        /* ADC test begin */
-        printf("\r\n******** ADC test ********\r\n");
-        voltage_ch8 = Adc_getVoltage(ADC_CHANNEL_8);
-        printf("voltage PB0 = %1.3fV\n", voltage_ch8);
         rt_thread_mdelay(100);
-
-        voltage_ch9 = Adc_getVoltage(ADC_CHANNEL_9);
-        printf("voltage PB1 = %1.3fV\n", voltage_ch9);
-        rt_thread_mdelay(1000);
-        /* ADC test end */
     }
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

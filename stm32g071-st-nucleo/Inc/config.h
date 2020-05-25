@@ -36,5 +36,6 @@ typedef enum{FALSE = 0, TRUE = !FALSE}BOOL;
 #include "gpio.h"
 #include "uart.h"
 #include "iwdg.h"
-
+#include "adc.h"
+    
 #endif // !__CONFIG_H__
